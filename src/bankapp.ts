@@ -9,6 +9,7 @@ import type { AccountInfoJson, ClassType } from './types/index';
       this.money = money; 
       this.accountHolder = name;
       this.createAccount();
+      this.shutdownApp();
     }
 
     public deposit(amount: number): number {
@@ -43,6 +44,13 @@ import type { AccountInfoJson, ClassType } from './types/index';
 
     private readAccountProfile(): AccountInfoJson {
       return fs.readJsonSync('./src/accountInfo.json') as AccountInfoJson;
+    }
+
+    private shutdownApp(): void {
+        console.log('App will shutdown in 30 seconds, hurry up!');
+        setTimeout(() => {
+          console.log("Time's up -- shuttingdown app. Bye!");
+        }, 30000);
     }
   
   }
