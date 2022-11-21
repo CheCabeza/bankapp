@@ -12,6 +12,7 @@
   "license": "ISC",
   "devDependencies": {
     "@types/fs-extra": "^9.0.13",
+    "@types/inquirer": "^9.0.3",
     "@types/jest": "^29.2.2",
     "@typescript-eslint/eslint-plugin": "^5.43.0",
     "@typescript-eslint/parser": "^5.43.0",
@@ -24,6 +25,9 @@
     "typescript": "^4.8.4"
   },
   "dependencies": {
-    "fs-extra": "10.1.0"
+    "chalk": "5.1.2",
+    "fs-extra": "10.1.0",
+    "inquirer": "9.1.4",
+    "nanospinner": "1.1.0"
   }
 }
