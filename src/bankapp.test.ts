@@ -35,11 +35,9 @@ describe("Given an user named Test with 1000 in his account", () => {
   }); 
 
   test("App will show shutdown message after 30 seconds", () => {
-    jest.spyOn(global, 'setTimeout');
     const shutdownMessage = jest.spyOn(global.console, 'log');
     jest.advanceTimersByTime(30000);
 
-    // Expect(setTimeout).toHaveBeenCalledTimes(1);
     expect(shutdownMessage).toHaveBeenLastCalledWith("Time's up -- shuttingdown app. Bye!");
   });
 

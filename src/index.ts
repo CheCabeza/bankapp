@@ -3,13 +3,13 @@
 import chalk from "chalk";
 import inquirer from "inquirer";
 import { createSpinner } from "nanospinner";
-import { Account } from "./bankapp";
+import { Account } from "./bankapp.js";
 import type { ClassType } from './types/index';
 
 
 let userAccount: ClassType;
 
-// eslint-disable-next-line no-promise-executor-return
+
 const sleep = async (ms = 2000) => new Promise((r) => setTimeout(r, ms));
 
 async function welcome() {
@@ -39,7 +39,7 @@ async function handleAnswer(isCorrect: boolean) {
 }
 
 async function askName() {
-  let answers = await inquirer.prompt({
+  const userName = await inquirer.prompt({
     name: "user_name",
     type: "input",
     message: "What is your name?",
@@ -48,7 +48,7 @@ async function askName() {
     },
   });
 
-  answers = await inquirer.prompt({
+  const initialMoney = await inquirer.prompt({
     name: "user_money",
     type: "input",
     message: "How much money do you have in your account?",
@@ -57,21 +57,7 @@ async function askName() {
     },
   });
 
-  userAccount = new Account(answers.user_name, 0);
-}
-
-async function shutdownApp() {
-  console.clear();
-
-  console.log(
-    chalk.green(
-      `Bank app shutting down after 30 seconds. Bye!`
-    )
-  );
-
-  await sleep();
-
-  process.exit(0);
+  userAccount = new Account(userName.user_name, initialMoney.user_money);
 }
 
 async function menu() {
@@ -88,26 +74,55 @@ async function menu() {
     ],
   });
 
-  // Switch (answers.menuChoice) {
-  //   case "Deposit":
-  //     console.log("F1")
-  //     break;
-  //   case "Withdraw":
-  //     console.log("F2")
-  //     break;
-  //   case "Print Statement":
-  //     console.log("F3")
-  //     break;
-  //   default:
-  //     console.log("F4")
-  //     break;
-  // }
+  switch (answers.menuChoice) {
+    case "Deposit":
+      await depositOrwithdrawOption("deposit");
+      break;
+    case "Withdraw":
+      await depositOrwithdrawOption("withdraw");
+      break;
+    case "Print Statement":
+      userAccount.printStatement();
+      break;
+    default:
+      process.exit(0);
+  }
 
   return handleAnswer(answers.menuChoice === "Exit");
 }
 
-console.clear();
+async function depositOrwithdrawOption(option: "deposit" | "withdraw") {
+  const moneyToDeposit = await inquirer.prompt({
+    name: "money",
+    type: "input",
+    message: `How much money do you want to ${option} into your account?\n`,
+  });
+
+  if (option === "deposit") {
+    userAccount.deposit(moneyToDeposit.money);
+  } else {
+    userAccount.withdraw(moneyToDeposit.money);
+  }
+
+  await menu();
+
+}
+
+function shutdownApp() {
+  console.clear();
+
+  console.log(
+    chalk.green(
+      `Bank app shutting down after 30 seconds. Bye!`
+    )
+  );
+
+  process.exit(0);
+}
+
+console.clear(); 
+
 await welcome();
 await askName();
 await menu();
-await shutdownApp();
+shutdownApp();
