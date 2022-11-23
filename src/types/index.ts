@@ -11,6 +11,7 @@ export type TransactionLog = {
 }
 
 export type ClassType = {
+  accountHolder: string;
   deposit: (amount: number) => number,
   withdraw: (amount: number) => number,
   printStatement: () => void
