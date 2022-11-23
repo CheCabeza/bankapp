@@ -50,7 +50,10 @@ import type { AccountInfoJson, ClassType } from './types/index';
         console.log('App will shutdown in 30 seconds, hurry up!');
         setTimeout(() => {
           console.log("Time's up -- shuttingdown app. Bye!");
+          process.exit(0);
         }, 30000);
+
+
     }
   
   }

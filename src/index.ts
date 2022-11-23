@@ -2,7 +2,6 @@
 
 import chalk from "chalk";
 import inquirer from "inquirer";
-import { createSpinner } from "nanospinner";
 import { Account } from "./bankapp.js";
 import type { ClassType } from './types/index';
 
@@ -21,21 +20,6 @@ async function welcome() {
     ${chalk.bgBlue("MENU")} 
     Choose one option from the menu
   `);
-}
-
-async function handleAnswer(isCorrect: boolean) {
-   
-  const spinner = createSpinner("Loading ...").start();
-  await sleep();
-
-  if (isCorrect) {
-    spinner.success({
-      text: `Thanks ${userAccount.accountHolder}. Transaction done`,
-    });
-  } else {
-    spinner.error({ text: `💀 Error ${userAccount.accountHolder}!` });
-    process.exit(1);
-  }
 }
 
 async function askName() {
@@ -57,13 +41,13 @@ async function askName() {
     },
   });
 
-  userAccount = new Account(userName.user_name, initialMoney.user_money);
+  userAccount = new Account(userName.user_name, Number(initialMoney.user_money));
 }
 
 async function menu() {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-  const answers = await inquirer.prompt({
-    name: "question_1",
+  const answer = await inquirer.prompt({
+    name: "menu_questions",
     type: "list",
     message: "Choose an option\n",
     choices: [
@@ -74,7 +58,13 @@ async function menu() {
     ],
   });
 
-  switch (answers.menuChoice) {
+  await pickChoice(answer.menu_questions);
+
+}
+
+async function pickChoice (choice: string ) {
+
+    switch (choice) {
     case "Deposit":
       await depositOrwithdrawOption("deposit");
       break;
@@ -83,12 +73,13 @@ async function menu() {
       break;
     case "Print Statement":
       userAccount.printStatement();
+      await sleep();
+      await menu();
       break;
     default:
-      process.exit(0);
+      shutdownApp();
   }
 
-  return handleAnswer(answers.menuChoice === "Exit");
 }
 
 async function depositOrwithdrawOption(option: "deposit" | "withdraw") {
@@ -99,10 +90,12 @@ async function depositOrwithdrawOption(option: "deposit" | "withdraw") {
   });
 
   if (option === "deposit") {
-    userAccount.deposit(moneyToDeposit.money);
+    userAccount.deposit(Number(moneyToDeposit.money));
   } else {
-    userAccount.withdraw(moneyToDeposit.money);
+    userAccount.withdraw(Number(moneyToDeposit.money));
   }
+
+  await sleep();
 
   await menu();
 
@@ -113,7 +106,7 @@ function shutdownApp() {
 
   console.log(
     chalk.green(
-      `Bank app shutting down after 30 seconds. Bye!`
+      `Thanks for using Bankapp. Bye!`
     )
   );
 
@@ -125,4 +118,4 @@ console.clear();
 await welcome();
 await askName();
 await menu();
-shutdownApp();
+
